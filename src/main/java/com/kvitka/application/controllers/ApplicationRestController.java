@@ -29,15 +29,27 @@ public class ApplicationRestController {
 
     @PostMapping
     public List<LoanOfferDTO> application(@RequestBody LoanApplicationRequestDTO loanApplicationRequestDTO) {
-        ResponseEntity<LoanOfferDTO[]> loanOffersResponse = restTemplateService.postForEntity(
-                dealURL + '/' + applicationDealEndpoint,
-                loanApplicationRequestDTO, LoanOfferDTO[].class);
+        log.info("[@PostMapping] application method called. Argument: {}", loanApplicationRequestDTO);
 
-        return List.of(Objects.requireNonNull(loanOffersResponse.getBody()));
+        String applicationDealURL = dealURL + '/' + applicationDealEndpoint;
+        log.info("Sending POST request on \"{}\" (request body: {})", applicationDealURL, loanApplicationRequestDTO);
+        ResponseEntity<LoanOfferDTO[]> loanOffersResponse = restTemplateService.postForEntity(
+                applicationDealURL, loanApplicationRequestDTO, LoanOfferDTO[].class);
+        log.info("POST request on \"{}\" sent successfully!", applicationDealURL);
+        List<LoanOfferDTO> loanOffers = List.of(Objects.requireNonNull(loanOffersResponse.getBody()));
+        log.info("Response from POST request on \"{}\" is: {}", applicationDealURL, loanOffers);
+
+        log.info("[@PostMapping] application method returns value: {}", loanOffers);
+        return loanOffers;
     }
 
     @PutMapping("offer")
     public void offer(LoanOfferDTO loanOfferDTO) {
-        restTemplateService.put(dealURL + '/' + offerDealEndpoint, loanOfferDTO);
+        log.info("[@PutMapping(offer)] offer method called. Argument: {}", loanOfferDTO);
+        String offerDealURL = dealURL + '/' + offerDealEndpoint;
+        log.info("Sending PUT request on \"{}\" (request body: {})", offerDealURL, loanOfferDTO);
+        restTemplateService.put(offerDealURL, loanOfferDTO);
+        log.info("PUT request on \"{}\" sent successfully!", offerDealURL);
+        log.info("[@PutMapping(offer)] offer method finished.");
     }
 }
