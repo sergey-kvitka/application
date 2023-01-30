@@ -1,2 +1,9 @@
 server:
   port: 7900
+
+rest:
+  deal:
+    url: http://localhost:8020
+    endpoints:
+      offer: deal/offer
+      application: deal/application
