@@ -1,4 +1,4 @@
-package com.kvitka.application.services;
+package com.kvitka.application.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
