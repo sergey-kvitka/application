@@ -2,7 +2,8 @@ package com.kvitka.application.controllers;
 
 import com.kvitka.application.dtos.LoanApplicationRequestDTO;
 import com.kvitka.application.dtos.LoanOfferDTO;
-import com.kvitka.application.services.RestTemplateService;
+import com.kvitka.application.services.impl.PreScoreServiceImpl;
+import com.kvitka.application.services.impl.RestTemplateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,10 +27,12 @@ public class ApplicationRestController {
     private String offerDealEndpoint;
 
     private final RestTemplateService restTemplateService;
+    private final PreScoreServiceImpl preScoreService;
 
     @PostMapping
     public List<LoanOfferDTO> application(@RequestBody LoanApplicationRequestDTO loanApplicationRequestDTO) {
         log.info("[@PostMapping] application method called. Argument: {}", loanApplicationRequestDTO);
+        preScoreService.preScore(loanApplicationRequestDTO);
 
         String applicationDealURL = dealURL + '/' + applicationDealEndpoint;
         log.info("Sending POST request on \"{}\" (request body: {})", applicationDealURL, loanApplicationRequestDTO);
