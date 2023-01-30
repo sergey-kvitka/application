@@ -1,5 +1,6 @@
 package com.kvitka.application.controllers;
 
+import com.kvitka.application.exceptions.PreScoreException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,14 @@ public class ExceptionHandlingController {
         }
         log.warn("{} handled (message: {})", exceptionSimpleName, exceptionMessage);
         return ResponseEntity.badRequest().body(exceptionSimpleName + ": " + exceptionMessage);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(PreScoreException.class)
+    public ResponseEntity<String> preScoreExceptionHandler(PreScoreException e) {
+        log.warn("PreScoreException handled (message: {})", e.getMessage());
+        return ResponseEntity.badRequest().body(
+                e.getClass().getSimpleName() + ": " + e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
