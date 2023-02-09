@@ -7,6 +7,7 @@ import com.kvitka.application.services.impl.RestTemplateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,9 +23,9 @@ public class ApplicationRestController {
     @Value("${rest.deal.url}")
     private String dealURL;
     @Value("${rest.deal.endpoints.application}")
-    private String applicationDealEndpoint;
+    private String dealApplicationEndpoint;
     @Value("${rest.deal.endpoints.offer}")
-    private String offerDealEndpoint;
+    private String dealOfferEndpoint;
 
     private final RestTemplateService restTemplateService;
     private final PreScoreServiceImpl preScoreService;
@@ -34,7 +35,7 @@ public class ApplicationRestController {
         log.info("[@PostMapping] application method called. Argument: {}", loanApplicationRequestDTO);
         preScoreService.preScore(loanApplicationRequestDTO);
 
-        String applicationDealURL = dealURL + '/' + applicationDealEndpoint;
+        String applicationDealURL = dealURL + '/' + dealApplicationEndpoint;
         log.info("Sending POST request on \"{}\" (request body: {})", applicationDealURL, loanApplicationRequestDTO);
         ResponseEntity<LoanOfferDTO[]> loanOffersResponse = restTemplateService.postForEntity(
                 applicationDealURL, loanApplicationRequestDTO, LoanOfferDTO[].class);
@@ -47,12 +48,13 @@ public class ApplicationRestController {
     }
 
     @PutMapping("offer")
-    public void offer(LoanOfferDTO loanOfferDTO) {
+    public ResponseEntity<?> offer(@RequestBody LoanOfferDTO loanOfferDTO) {
         log.info("[@PutMapping(offer)] offer method called. Argument: {}", loanOfferDTO);
-        String offerDealURL = dealURL + '/' + offerDealEndpoint;
+        String offerDealURL = dealURL + '/' + dealOfferEndpoint;
         log.info("Sending PUT request on \"{}\" (request body: {})", offerDealURL, loanOfferDTO);
         restTemplateService.put(offerDealURL, loanOfferDTO);
         log.info("PUT request on \"{}\" sent successfully!", offerDealURL);
         log.info("[@PutMapping(offer)] offer method finished.");
+        return new ResponseEntity<>(loanOfferDTO.isEmpty() ? HttpStatus.ACCEPTED : HttpStatus.OK);
     }
 }
