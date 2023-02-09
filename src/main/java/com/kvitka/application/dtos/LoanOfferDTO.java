@@ -18,4 +18,15 @@ public class LoanOfferDTO {
     private BigDecimal rate;
     private Boolean isInsuranceEnabled;
     private Boolean isSalaryClient;
+
+    public boolean isEmpty() {
+        return !(applicationId == null) &&
+                requestedAmount == null &&
+                totalAmount == null &&
+                term == null &&
+                monthlyPayment == null &&
+                rate == null &&
+                isInsuranceEnabled == null &&
+                isSalaryClient == null;
+    }
 }
